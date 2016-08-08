@@ -14,7 +14,7 @@ export default class ArticleCell extends Component {
   render() {
     return (
 	     <TouchableHighlight 
-	     	onPress={this.props.onSelect}
+	     	onPress={() => this.props.onSelect(this.state.article)}
 	     	underlayColor={AppColors.highlight}>
 	        <View style={styles.row}>
 	          <Image

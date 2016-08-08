@@ -19,26 +19,27 @@ export default class HomeBanner extends Component {
 
   render() {
     return (
-      <TouchableHighlight 
-        onPress={this.props.onSelect}
-        underlayColor={AppColors.highlight}>
       	<View style={styles.banner}>
       		<ViewPager  
   			    dataSource={this.state.dataSource}  
-  			    renderPage={this._renderPage}  
+  			    renderPage={this._renderPage.bind(this)}  
   			    isLoop={true}  
-  			    autoPlay={true}
+            autoPlay={true}
             renderPageIndicator = {this._renderPageIndicator.bind(this)}/>
       	</View>
-      </TouchableHighlight>
     )
   }
 
   _renderPage(data, pageID) {  
     return (  
+      <TouchableHighlight 
+        style={{flex:1}}
+        onPress={() => this.props.onSelect(data)}
+        underlayColor={AppColors.highlight}>
         <Image  
         	source={{uri: data.titleImage}}  
-            style={{flex: 1}}/>  
+            style={{flex: 1, overflow: 'hidden'}}/>
+      </TouchableHighlight>  
     );  
   }  
 
@@ -59,7 +60,8 @@ export default class HomeBanner extends Component {
 var styles = StyleSheet.create({
   banner: {
     flex: 1,
-    height: 180
+    height: 180,
+    backgroundColor: 'red',
   },
 
   bannerIndicatorsContainer: {

@@ -2,11 +2,13 @@
 
 import React, { Component } from 'react';
 import { View, Text, ListView, Image, TouchableHighlight, StyleSheet, RefreshControl } from 'react-native';
+import NavigationBar from 'react-native-navbar';
 import Loading from '../../components/Loading';
 import ArticleCell from '../../components/ArticleCell';
 import ArticleDetail from './Detail.js';
 import HomeBanner from '../../components/HomeBanner';
 import { getArticles } from '../../network';
+import AppColors from '../../commons/AppColors';
 
 export default class HomePage extends Component {
   constructor(props) {
@@ -78,31 +80,42 @@ export default class HomePage extends Component {
       );
     }
     return (
-      <ListView
-        style = {styles.listView}
-        dataSource={this.state.dataSource}
-        renderRow={this._renderRow.bind(this)}
-        renderHeader={this._renderHeader.bind(this)}
-        onEndReached={this._onLoadMore.bind(this)}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this._onRefresh.bind(this)}
-            tintColor="gray"
-            title="下拉刷新"
-            titleColor="gray"
-            colors={['blue', 'black', 'green']}
-            progressBackgroundColor="yellow"
+      <View style={styles.container}>
+
+        <NavigationBar
+          title= {{title:this.props.title, tintColor: 'white'}} 
+          titleTextColor='white'
+          statusBar={{style: 'light-content'}}
+          tintColor={AppColors.major}
           />
-        }
-      />
+
+        <ListView
+          style = {styles.listView}
+          dataSource={this.state.dataSource}
+          renderRow={this._renderRow.bind(this)}
+          renderHeader={this._renderHeader.bind(this)}
+          onEndReached={this._onLoadMore.bind(this)}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
+              tintColor="gray"
+              title="下拉刷新"
+              titleColor="gray"
+              colors={['blue', 'black', 'green']}
+              progressBackgroundColor="yellow"
+            />
+          }
+        />
+
+      </View>
     );
   }
 
   _renderRow(rowData: string, sectionID: number) {
     return (
       <ArticleCell 
-        onSelect={(rowData) => {this._didSelectRow(rowData);}}
+        onSelect={(article) => {this._didSelectRow(article);}}
         article={rowData}
       />
     );
@@ -119,8 +132,11 @@ export default class HomePage extends Component {
 
   _didSelectRow(article) {
     this.props.navigator.push({
+      name: 'HomeDetail',
       component: ArticleDetail,
+      title: article.title,
       passProps: {
+        url: 'https://zhuanlan.zhihu.com' + article.url,
       }
     });
   }
@@ -128,18 +144,23 @@ export default class HomePage extends Component {
   // 取Banner的标题、链接和图片
   _getBannersData(){
       let articles = this.state.articles;
-      let banners = articles.slice(0, 5);
+      let banners = articles.slice(0, 3);
       return banners;
   }
 
 }
 
 var styles = StyleSheet.create({
+  container: {
+    flex:1,
+    overflow: 'hidden',
+  },
+
   listView: {
      flex:1,
-     marginTop: 64,
+     marginTop: 0,
      backgroundColor: '#f5f5f5',
      marginBottom: 0,
-  },
+  }
 });
 

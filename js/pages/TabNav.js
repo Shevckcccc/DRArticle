@@ -1,12 +1,14 @@
 'use strict';
 
 import React, {Component} from 'react';
-import {View, StatusBar, NavigatorIOS, Image, StyleSheet, Navigator} from 'react-native';
+import {View, StatusBar, NavigatorIOS, Image, StyleSheet, Navigator, Text} from 'react-native';
 import TabNavigator from 'react-native-tab-navigator';
+import {connect} from 'react-redux';
 
 import HomePage from './home/Index';
 import FollowingPage from './following/Index';
 import AppColors from '../commons/AppColors';
+import {setTabBarHidden} from '../actions';
 
 class TabBarNav extends Component {
   constructor(props) {
@@ -15,13 +17,15 @@ class TabBarNav extends Component {
   }
 
   render() {
+    // 通过调用 connect() 注入:
+    const { isTabBarHidden } = this.props;
 
     let homeIcon = require('../assets/image/TabHome.png');
     let homeIconSeleted = require('../assets/image/TabHomeSelected.png');
     let followingIcon = require('../assets/image/TabPlayground.png');
     let followingIconSeleted = require('../assets/image/TabPlaygroundSelected.png');
 
-    let tabBarHeight = 44;
+    let tabBarHeight = isTabBarHidden ? 0 : 44;
 
     return (
        <TabNavigator
@@ -43,15 +47,25 @@ class TabBarNav extends Component {
               selectedTab: 'article',
             });
           }}>
-          <NavigatorIOS 
-            style = {styles.container}
-            barTintColor={AppColors.major}
-            titleTextColor='white'
-            tintColor='white'
-            initialRoute={{
-              title: '文章',
-              component: HomePage,
-            }}/>
+          <Navigator
+              style = {styles.container}
+              initialRoute={{ 
+                name: 'HomePage',
+                title: '文章',
+                component: HomePage,
+              }}
+              configureScene={(route) => {
+                if (route.sceneConfig) {
+                  return route.sceneConfig;
+                }
+                return Navigator.SceneConfigs.PushFromRight;
+              }}
+              onWillFocus={(route) => {this._onNavigationBarWillFocus(route)}} 
+              onDidFocus={(route) => {this._onNavigationBarDidFocus(route)}}
+              renderScene={(route, navigator) => {
+                let Component = route.component;
+                return <Component {...route.passProps} title={route.title} navigator={navigator} />
+              }} />
           </TabNavigator.Item>
 
           <TabNavigator.Item
@@ -67,20 +81,52 @@ class TabBarNav extends Component {
                 selectedTab: 'following',
               });
             }}>
-            <NavigatorIOS 
+            <Navigator
               style = {styles.container}
-              barTintColor={AppColors.major}
-              titleTextColor='white'
-              tintColor='white'
-              initialRoute={{
-                title: '订阅',
-                component: FollowingPage,
-              }} >
-              </NavigatorIOS>
+              initialRoute={{ 
+                name: 'FollowingPage',
+                title:'订阅', 
+                component: FollowingPage 
+              }}
+              configureScene={(route) => {
+                return Navigator.SceneConfigs.HorizontalSwipeJump;
+              }}
+              onWillFocus={(route) => {this._onNavigationBarWillFocus(route)}}
+              onDidFocus={(route) => {this._onNavigationBarDidFocus(route)}}
+              renderScene={(route, navigator) => {
+                let Component = route.component;
+                return <Component {...route.params} title={route.title} navigator={navigator} />
+              }} />
           </TabNavigator.Item>
         </TabNavigator>
     )
   }
+
+  // 控制tabbar隐藏/显示，此处也可以直接写state状态，redux只作学习用
+  _onNavigationBarWillFocus(route) {
+    let dispatch = this.props.dispatch;
+    if (route.name === 'HomeDetail') {
+       dispatch(setTabBarHidden(true));
+    } 
+  }
+
+  // 显示放到did里面因为会有will会有一点卡顿
+  _onNavigationBarDidFocus(route) {
+    let dispatch = this.props.dispatch;
+    if (route.name === 'HomePage') {
+       dispatch(setTabBarHidden(false));
+    } 
+    else if (route.name === 'FollowingPage') {
+       dispatch(setTabBarHidden(false));
+    }
+  }
+}
+
+// 基于全局 state ，哪些是我们想注入的 props 
+function select(state) {
+  return {
+    isTabBarHidden: state.setTabBarHidden
+  };
 }
 
 var styles = StyleSheet.create({
@@ -104,4 +150,4 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = TabBarNav;
+module.exports = connect(select)(TabBarNav);
