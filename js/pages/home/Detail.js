@@ -4,7 +4,7 @@ import NavigationBar from 'react-native-navbar';
 
 import BaseStyles from '../../assets/style/Base';
 import Loading from '../../components/Loading';
-import AppColors from '../../commons/AppColors';
+import AppColors from '../../common/AppColors';
 import BackBarButton from '../../components/BackBarButton';
 
 export default class ArticleDetail extends Component {

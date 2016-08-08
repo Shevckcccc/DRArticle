@@ -7,7 +7,7 @@ import {connect} from 'react-redux';
 
 import HomePage from './home/Index';
 import FollowingPage from './following/Index';
-import AppColors from '../commons/AppColors';
+import AppColors from '../common/AppColors';
 import {setTabBarHidden} from '../actions';
 
 class TabBarNav extends Component {
@@ -89,13 +89,16 @@ class TabBarNav extends Component {
                 component: FollowingPage 
               }}
               configureScene={(route) => {
-                return Navigator.SceneConfigs.HorizontalSwipeJump;
+                if (route.sceneConfig) {
+                  return route.sceneConfig;
+                }
+                return Navigator.SceneConfigs.PushFromRight;
               }}
               onWillFocus={(route) => {this._onNavigationBarWillFocus(route)}}
               onDidFocus={(route) => {this._onNavigationBarDidFocus(route)}}
               renderScene={(route, navigator) => {
                 let Component = route.component;
-                return <Component {...route.params} title={route.title} navigator={navigator} />
+                return <Component {...route.passProps} title={route.title} navigator={navigator} />
               }} />
           </TabNavigator.Item>
         </TabNavigator>

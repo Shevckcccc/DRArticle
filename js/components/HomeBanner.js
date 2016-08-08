@@ -2,44 +2,43 @@
 
 import React, {Component} from 'react';
 import {Text, View, Image, StyleSheet, TouchableHighlight} from 'react-native';
-import ViewPager from 'react-native-viewpager';
-import DefaultViewPageIndicator from 'react-native-viewpager/DefaultViewPageIndicator';
-import AppColors from '../commons/AppColors';
+import Swiper from 'react-native-swiper';
+import AppColors from '../common/AppColors';
+import DRImage from '../components/DRImage';
 
 export default class HomeBanner extends Component {
     constructor(props) {  
     super(props);  
-    var dataSource = new ViewPager.DataSource({  
-        pageHasChanged: (p1, p2) => p1 !== p2,  
-    });    
-    this.state = {  
-        dataSource: dataSource.cloneWithPages(this.props.banners),
-    }  
   }  
 
   render() {
     return (
       	<View style={styles.banner}>
-      		<ViewPager  
-  			    dataSource={this.state.dataSource}  
-  			    renderPage={this._renderPage.bind(this)}  
-  			    isLoop={true}  
-            autoPlay={true}
-            renderPageIndicator = {this._renderPageIndicator.bind(this)}/>
+           <Swiper 
+            style={styles.wrapper} 
+            autoplay={true}
+            activeDot={<View style={styles.activeDot}/>}
+            dot={<View style={styles.dot}/>}
+            paginationStyle={styles.paginationStyle}
+            height={180} >
+              {this.props.banners.map((item, key) => {
+                return this._renderPage(item, key);
+              })}
+            </Swiper>
       	</View>
     )
   }
 
-  _renderPage(data, pageID) {  
+  _renderPage(item, key) {  
     return (  
-      <TouchableHighlight 
+      <TouchableHighlight key={key}
         style={{flex:1}}
-        onPress={() => this.props.onSelect(data)}
+        onPress={() => this.props.onSelect(item)}
         underlayColor={AppColors.highlight}>
-        <Image  
-        	source={{uri: data.titleImage}}  
+        <DRImage  
+            source={{uri: item.titleImage}}  
             style={{flex: 1, overflow: 'hidden'}}/>
-      </TouchableHighlight>  
+      </TouchableHighlight> 
     );  
   }  
 
@@ -61,35 +60,32 @@ var styles = StyleSheet.create({
   banner: {
     flex: 1,
     height: 180,
-    backgroundColor: 'red',
   },
 
-  bannerIndicatorsContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    backgroundColor: 'transparent',
-    height:20,
-    position: 'absolute',
-    bottom: 0,
-    left:0,
-    right: 0,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+  paginationStyle:{
+      bottom:10,
   },
 
-  bannerIndicatorsText: {
-    color: 'white',
-    fontSize: 12,
-    marginLeft: 10,
-    paddingTop: 3,
-    width:230,
+  activeDot: {
+    backgroundColor: 'white', 
+    width: 4, 
+    height: 4, 
+    borderRadius: 2, 
+    marginLeft: 3, 
+    marginRight: 3, 
+    marginTop: 3, 
+    marginBottom: 3,
   },
 
-  bannerIndicators: {
-    alignItems: 'center',
-    position: 'absolute',
-    bottom: 7,
-    right: 0,
-    backgroundColor: 'transparent',
+  dot:{
+    backgroundColor: 'rgba(255,255,255,0.5)', 
+    width: 4, 
+    height: 4, 
+    borderRadius: 2, 
+    marginLeft: 3, 
+    marginRight: 3, 
+    marginTop: 3, 
+    marginBottom: 3,
   },
 
 });

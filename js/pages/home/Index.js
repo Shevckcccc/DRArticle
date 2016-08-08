@@ -8,7 +8,7 @@ import ArticleCell from '../../components/ArticleCell';
 import ArticleDetail from './Detail.js';
 import HomeBanner from '../../components/HomeBanner';
 import { getArticles } from '../../network';
-import AppColors from '../../commons/AppColors';
+import AppColors from '../../common/AppColors';
 
 export default class HomePage extends Component {
   constructor(props) {
@@ -74,21 +74,25 @@ export default class HomePage extends Component {
   }
 
   render() {
+    let navigationBar = (<NavigationBar
+            title= {{title:this.props.title, tintColor: 'white'}} 
+            titleTextColor='white'
+            statusBar={{style: 'light-content'}}
+            tintColor={AppColors.major}
+          />);
+
     if(!this.state.loaded) {
       return (
-        <Loading/>
+        <View>
+          {navigationBar}
+          <Loading/>
+        </View>
       );
     }
     return (
       <View style={styles.container}>
 
-        <NavigationBar
-          title= {{title:this.props.title, tintColor: 'white'}} 
-          titleTextColor='white'
-          statusBar={{style: 'light-content'}}
-          tintColor={AppColors.major}
-          />
-
+        {navigationBar}
         <ListView
           style = {styles.listView}
           dataSource={this.state.dataSource}
@@ -144,7 +148,7 @@ export default class HomePage extends Component {
   // 取Banner的标题、链接和图片
   _getBannersData(){
       let articles = this.state.articles;
-      let banners = articles.slice(0, 3);
+      let banners = articles.slice(0, 5);
       return banners;
   }
 

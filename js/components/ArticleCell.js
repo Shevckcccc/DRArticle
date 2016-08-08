@@ -2,7 +2,8 @@
 
 import React, {Component} from 'react';
 import {View,Image, Text, TouchableHighlight, StyleSheet} from 'react-native';
-import AppColors from '../commons/AppColors';
+import AppColors from '../common/AppColors';
+import DRImage from './DRImage';
 
 export default class ArticleCell extends Component {
   constructor(props) {
@@ -17,7 +18,7 @@ export default class ArticleCell extends Component {
 	     	onPress={() => this.props.onSelect(this.state.article)}
 	     	underlayColor={AppColors.highlight}>
 	        <View style={styles.row}>
-	          <Image
+	          <DRImage
 	            source={{uri: this.state.article.titleImage}}
 	            style={styles.thumbnail}
 	          />
