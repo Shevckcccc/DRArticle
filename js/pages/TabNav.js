@@ -111,6 +111,13 @@ class TabBarNav extends Component {
     if (route.name === 'HomeDetail') {
        dispatch(setTabBarHidden(true));
     } 
+    else if (route.name === 'FollowingDetail') {
+      dispatch(setTabBarHidden(true));
+    }
+    else if (route.name === 'FollowingAdd') {
+      dispatch(setTabBarHidden(true));
+    }
+    
   }
 
   // 显示放到did里面因为会有will会有一点卡顿

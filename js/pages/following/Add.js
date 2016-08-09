@@ -4,14 +4,14 @@ import React, { Component } from 'react';
 import { View, Text, ListView, Image, TouchableHighlight, StyleSheet, RefreshControl } from 'react-native';
 import NavigationBar from 'react-native-navbar';
 import Loading from '../../components/Loading';
-import FollowingCell, { ADD_AUTHOR } from '../../components/FollowingCell';
+import AuthorCell from '../../components/AuthorCell';
 import HomeBanner from '../../components/HomeBanner';
 import { getArticles } from '../../network';
 import AppColors from '../../common/AppColors';
 import FollowingDetail from './Detail.js';
-import FollowingAdd from './Add.js';
+import BackBarButton from '../../components/BackBarButton';
 
-export default class FollowingPage extends Component {
+export default class FollowingAdd extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -24,7 +24,7 @@ export default class FollowingPage extends Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this._fetchData();
   }
 
@@ -33,8 +33,6 @@ export default class FollowingPage extends Component {
     getArticles({offset:offset, limit:this.state.pageLimit}, {
       onSuccess: (responseData) => {
         let authors = responseData ;
-        // 增加【添加订阅】按钮
-        authors.push(ADD_AUTHOR);
 
         this.setState({
           authors: authors,
@@ -63,6 +61,7 @@ export default class FollowingPage extends Component {
             titleTextColor='white'
             statusBar={{style: 'light-content'}}
             tintColor={AppColors.major}
+            leftButton={<BackBarButton onPress= {() => this._onLeftButtonTapped()} />} 
           />);
 
     if(!this.state.loaded) {
@@ -77,7 +76,7 @@ export default class FollowingPage extends Component {
       <View style={styles.container}>
         {navigationBar}
         <ListView
-          contentContainerStyle = {styles.listView}
+          style={styles.listView}
           dataSource={this.state.dataSource}
           renderRow={this._renderRow.bind(this)}
           refreshControl={
@@ -98,19 +97,10 @@ export default class FollowingPage extends Component {
 
   _renderRow(rowData: string, sectionID: number) {
     return (
-      <FollowingCell 
+      <AuthorCell 
         onSelect={(author) => {this._didSelectRow(author);}}
         onAddAuthor = {() => {this._didSelectAddAuthor();}}
         author={rowData}
-      />
-    );
-  }
-
-  _renderHeader() {
-    return (
-      <HomeBanner 
-        banners={this._getBannersData()}
-        onSelect = {(rowData) => {this._didSelectRow(rowData);}}
       />
     );
   }
@@ -126,15 +116,10 @@ export default class FollowingPage extends Component {
     });
   }
 
-  _didSelectAddAuthor() {
-    this.props.navigator.push({
-      name: 'FollowingAdd',
-      component: FollowingAdd,
-      title: '添加订阅',
-      passProps: {
-      }
-    });
+  _onLeftButtonTapped() {
+      this.props.navigator.pop();
   }
+
 }
 
 var styles = StyleSheet.create({
@@ -146,10 +131,9 @@ var styles = StyleSheet.create({
 
   listView: {
      flex:1,
-     flexDirection: 'row',
-     flexWrap: 'wrap',
+     marginTop: 0,
      backgroundColor: '#f5f5f5',
-     justifyContent: 'flex-start',
+     marginBottom: 0,
   }
 });
 

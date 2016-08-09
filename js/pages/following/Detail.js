@@ -4,27 +4,34 @@ import React, { Component } from 'react';
 import { View, Text, ListView, Image, TouchableHighlight, StyleSheet, RefreshControl } from 'react-native';
 import NavigationBar from 'react-native-navbar';
 import Loading from '../../components/Loading';
-import FollowingCell, { ADD_AUTHOR } from '../../components/FollowingCell';
-import HomeBanner from '../../components/HomeBanner';
+import FollowingDetailCell from '../../components/FollowingDetailCell';
+import ArticleDetail from '../home/Detail.js';
+import AuthorHeader from '../../components/AuthorHeader';
 import { getArticles } from '../../network';
 import AppColors from '../../common/AppColors';
-import FollowingDetail from './Detail.js';
-import FollowingAdd from './Add.js';
+import BackBarButton from '../../components/BackBarButton';
 
-export default class FollowingPage extends Component {
+
+export default class FollowingDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      authors: [],
+      articles: [],
       dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2}),
       loaded: false,
       refreshing: false,
+      loadingMore: false,
+      hasMore: true,
       pageOffset: 0,
       pageLimit: 10,
     };
   }
 
   componentWillMount() {
+    
+  }
+
+  componentDidMount() {
     this._fetchData();
   }
 
@@ -32,21 +39,25 @@ export default class FollowingPage extends Component {
     offset *= this.state.pageLimit;
     getArticles({offset:offset, limit:this.state.pageLimit}, {
       onSuccess: (responseData) => {
-        let authors = responseData ;
-        // 增加【添加订阅】按钮
-        authors.push(ADD_AUTHOR);
+        let hasMore = responseData.length == this.state.pageLimit;
+        let articles = offset == 0 ? responseData : this.state.articles.concat(responseData);
+        let nextOffset = offset == 0 ? 1 : ++this.state.pageOffset;
 
         this.setState({
-          authors: authors,
-          dataSource: this.state.dataSource.cloneWithRows(authors),
+          articles: articles,
+          dataSource: this.state.dataSource.cloneWithRows(articles),
           loaded: true,
           refreshing: false,
+          loadingMore: false,
+          hasMore: hasMore,
+          pageOffset: nextOffset,
         });
       },
       onFailed: (err) => {
         this.setState({
           loaded: true,
           refreshing: false,
+          loadingMore: false,
         });
       }
     });
@@ -57,17 +68,29 @@ export default class FollowingPage extends Component {
     this._fetchData();
   }
 
+  _onLoadMore() {
+    this.setState({loadingMore: true});
+    if (this.state.refreshing) {
+      return;
+    }
+    if (!this.state.hasMore) {
+      return;
+    }
+    this._fetchData(this.state.pageOffset);
+  }
+
   render() {
     let navigationBar = (<NavigationBar
             title= {{title:this.props.title, tintColor: 'white'}} 
             titleTextColor='white'
             statusBar={{style: 'light-content'}}
             tintColor={AppColors.major}
+            leftButton={<BackBarButton onPress= {() => this._onLeftButtonTapped()} />} 
           />);
 
     if(!this.state.loaded) {
       return (
-        <View>
+        <View style={styles.container}>
           {navigationBar}
           <Loading/>
         </View>
@@ -75,11 +98,14 @@ export default class FollowingPage extends Component {
     }
     return (
       <View style={styles.container}>
+
         {navigationBar}
         <ListView
-          contentContainerStyle = {styles.listView}
+          style = {styles.listView}
           dataSource={this.state.dataSource}
           renderRow={this._renderRow.bind(this)}
+          renderHeader={this._renderHeader.bind(this)}
+          onEndReached={this._onLoadMore.bind(this)}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
@@ -92,64 +118,57 @@ export default class FollowingPage extends Component {
             />
           }
         />
+
       </View>
     );
   }
 
   _renderRow(rowData: string, sectionID: number) {
     return (
-      <FollowingCell 
-        onSelect={(author) => {this._didSelectRow(author);}}
-        onAddAuthor = {() => {this._didSelectAddAuthor();}}
-        author={rowData}
+      <FollowingDetailCell 
+        onSelect={(article) => {this._didSelectRow(article);}}
+        article={rowData}
       />
     );
   }
 
   _renderHeader() {
     return (
-      <HomeBanner 
-        banners={this._getBannersData()}
+      <AuthorHeader 
+        author={this.props.author}
         onSelect = {(rowData) => {this._didSelectRow(rowData);}}
       />
     );
   }
 
-  _didSelectRow(author) {
+  _didSelectRow(article) {
     this.props.navigator.push({
-      name: 'FollowingDetail',
-      component: FollowingDetail,
-      title: author.author.name,
+      name: 'HomeDetail',
+      component: ArticleDetail,
+      title: article.title,
       passProps: {
-        author: author,
+        url: 'https://zhuanlan.zhihu.com' + article.url,
       }
     });
   }
 
-  _didSelectAddAuthor() {
-    this.props.navigator.push({
-      name: 'FollowingAdd',
-      component: FollowingAdd,
-      title: '添加订阅',
-      passProps: {
-      }
-    });
+  _onLeftButtonTapped() {
+      this.props.navigator.pop();
   }
+
 }
 
 var styles = StyleSheet.create({
   container: {
     flex:1,
-    overflow: 'hidden',
     backgroundColor: '#f5f5f5',
   },
 
   listView: {
      flex:1,
-     flexDirection: 'row',
-     flexWrap: 'wrap',
+     marginTop: 0,
      backgroundColor: '#f5f5f5',
-     justifyContent: 'flex-start',
+     marginBottom: 0,
   }
 });
 
