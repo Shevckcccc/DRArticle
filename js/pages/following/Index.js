@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { View, Text, ListView, Image, TouchableHighlight, StyleSheet, RefreshControl } from 'react-native';
 import NavigationBar from 'react-native-navbar';
 import Loading from '../../components/Loading';
-import FollowingCell from '../../components/FollowingCell';
+import FollowingCell, { ADD_AUTHOR } from '../../components/FollowingCell';
 import HomeBanner from '../../components/HomeBanner';
 import { getArticles } from '../../network';
 import AppColors from '../../common/AppColors';
@@ -13,12 +13,10 @@ export default class FollowingPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      articles: [],
+      authors: [],
       dataSource: new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2}),
       loaded: false,
       refreshing: false,
-      loadingMore: false,
-      hasMore: true,
       pageOffset: 0,
       pageLimit: 10,
     };
@@ -32,25 +30,21 @@ export default class FollowingPage extends Component {
     offset *= this.state.pageLimit;
     getArticles({offset:offset, limit:this.state.pageLimit}, {
       onSuccess: (responseData) => {
-        let hasMore = responseData.length == this.state.pageLimit;
-        let articles = offset == 0 ? responseData : this.state.articles.concat(responseData);
-        let nextOffset = offset == 0 ? 1 : ++this.state.pageOffset;
+        let authors = responseData ;
+        // 增加【添加订阅】按钮
+        authors.push(ADD_AUTHOR);
 
         this.setState({
-          articles: articles,
-          dataSource: this.state.dataSource.cloneWithRows(articles),
+          authors: authors,
+          dataSource: this.state.dataSource.cloneWithRows(authors),
           loaded: true,
           refreshing: false,
-          loadingMore: false,
-          hasMore: hasMore,
-          pageOffset: nextOffset,
         });
       },
       onFailed: (err) => {
         this.setState({
           loaded: true,
           refreshing: false,
-          loadingMore: false,
         });
       }
     });
@@ -79,7 +73,6 @@ export default class FollowingPage extends Component {
     }
     return (
       <View style={styles.container}>
-
         {navigationBar}
         <ListView
           contentContainerStyle = {styles.listView}
@@ -97,7 +90,6 @@ export default class FollowingPage extends Component {
             />
           }
         />
-
       </View>
     );
   }
@@ -105,8 +97,9 @@ export default class FollowingPage extends Component {
   _renderRow(rowData: string, sectionID: number) {
     return (
       <FollowingCell 
-        onSelect={(article) => {this._didSelectRow(article);}}
-        article={rowData}
+        onSelect={(author) => {this._didSelectRow(author);}}
+        onAddAuthor = {() => {this._didSelectAddAuthor();}}
+        author={rowData}
       />
     );
   }
@@ -121,13 +114,11 @@ export default class FollowingPage extends Component {
   }
 
   _didSelectRow(article) {
+
   }
 
-  // 取Banner的标题、链接和图片
-  _getBannersData(){
-      let articles = this.state.articles;
-      let banners = articles.slice(0, 5);
-      return banners;
+  _didSelectAddAuthor() {
+
   }
 
 }
@@ -144,7 +135,7 @@ var styles = StyleSheet.create({
      flexDirection: 'row',
      flexWrap: 'wrap',
      backgroundColor: '#f5f5f5',
-     justifyContent: 'space-between',
+     justifyContent: 'flex-start',
   }
 });
 

@@ -21,8 +21,8 @@ export function post(url:string, params:any=null, callback: Callback) {
 async function request(url:string, method:string, params:any, callback:Callback) {
   try {
     let api = BASE_API + url;
-
     let data = {};
+    
     data.method = method;
     data.headers = API_HEADER;
 
@@ -31,7 +31,7 @@ async function request(url:string, method:string, params:any, callback:Callback)
     } else {
         api = _buildAbsoluteURI(api, params);
     }
-    
+
     console.log(api);
 
     let response = await fetch(api, data);

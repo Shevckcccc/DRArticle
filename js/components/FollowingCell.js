@@ -5,22 +5,37 @@ import {View,Image, Text, TouchableHighlight, StyleSheet} from 'react-native';
 import AppColors from '../common/AppColors';
 import DRImage from './DRImage';
 
+export const ADD_AUTHOR = 'ADD_AUTHOR';
+
 export default class FollowingCell extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      article: this.props.article,
-    };
   }
   render() {
+    if (typeof this.props.author === 'string' &&
+        this.props.author === ADD_AUTHOR ) {
+      return (<TouchableHighlight 
+       style={styles.row}
+        onPress={() => this.props.onAddAuthor()}
+        underlayColor={AppColors.highlight}>
+          <View>
+            <DRImage
+              source={require('../assets/image/AddPlus.png')}
+              style={styles.addThumbnail}
+            />
+            <Text style={styles.author}>添加订阅</Text>
+          </View>
+        </TouchableHighlight>)
+    }
+
     return (
 	     <TouchableHighlight 
        style={styles.row}
-	     	onPress={() => this.props.onSelect(this.state.article)}
+	     	onPress={() => this.props.onSelect(this.props.author)}
 	     	underlayColor={AppColors.highlight}>
 	        <View>
 	          <DRImage
-	            source={{uri: this.state.article.titleImage}}
+	            source={{uri: this.props.author.titleImage}}
 	            style={styles.thumbnail}
 	          />
 	          <Text style={styles.author}>{this._getAuthor()}</Text>
@@ -58,5 +73,13 @@ var styles = StyleSheet.create({
     marginTop: 10,
     textAlign: 'center'
   },
+
+  addThumbnail: {
+    height: 60,
+    width: 60,
+    borderRadius: 30,
+    borderWidth: 0.5,
+    borderColor: 'black',
+  }
 
 });
