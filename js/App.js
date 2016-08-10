@@ -2,20 +2,19 @@
 
 import React, { Component } from 'react';
 import { View, StatusBar } from 'react-native';
-import { createStore } from 'redux';
+import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
-import reducer from './reducers';
+import * as reducers from './reducers';
 
-
-import TabNav from './pages/TabNav';
+import AppNav from './pages/AppNav';
 import BaseStyles from './assets/style/Base';
 
-export default class App extends Component {
+let reducer = combineReducers(reducers);
+let store = createStore(reducer);
+
+class App extends Component {
 
   render() {
-    let store = createStore(reducer);
-    console.log(store.getState())
-    
     return(
       <Provider store={store}>
       	<View style={BaseStyles.container}>
@@ -24,10 +23,11 @@ export default class App extends Component {
   	          backgroundColor="rgba(0, 0, 0, 0.2)"
   	          barStyle="light-content"
   	         />
-        	<TabNav />
+        	<AppNav />
         </View>
       </Provider>
     );
   }
-  
 }
+
+module.exports = App;

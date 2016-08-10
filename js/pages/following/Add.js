@@ -56,13 +56,15 @@ export default class FollowingAdd extends Component {
   }
 
   render() {
-    let navigationBar = (<NavigationBar
-            title= {{title:this.props.title, tintColor: 'white'}} 
-            titleTextColor='white'
-            statusBar={{style: 'light-content'}}
-            tintColor={AppColors.major}
-            leftButton={<BackBarButton onPress= {() => this._onLeftButtonTapped()} />} 
-          />);
+    let navigationBar = (
+      <NavigationBar
+        title= {{title:this.props.title, tintColor: 'white'}}
+        titleTextColor='white'
+        statusBar={{style: 'light-content'}}
+        tintColor={AppColors.major}
+        leftButton={<BackBarButton onPress= {() => this._onLeftButtonTapped()} />}
+      />
+    );
 
     if(!this.state.loaded) {
       return (
@@ -97,7 +99,7 @@ export default class FollowingAdd extends Component {
 
   _renderRow(rowData: string, sectionID: number) {
     return (
-      <AuthorCell 
+      <AuthorCell
         onSelect={(author) => {this._didSelectRow(author);}}
         onAddAuthor = {() => {this._didSelectAddAuthor();}}
         author={rowData}
@@ -136,4 +138,3 @@ var styles = StyleSheet.create({
      marginBottom: 0,
   }
 });
-

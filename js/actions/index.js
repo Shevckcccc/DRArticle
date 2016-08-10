@@ -1,7 +1,22 @@
 'use strict';
 
-const Actions = require('./Tabbar');
+import{ TOGGLE_TABBAR, setTabBarHidden} from './Tabbar';
+import{
+	NAV_TO_FOLLOWING_ADD,
+	navToFollowingAdd,
+	NAV_INIT,
+	navInit,
+	NAV_TO_HOME_DETAIL,
+	navToHomeDetail,
+} from './navigatorActions';
 
 module.exports = {
-	...Actions,
-} 
+	TOGGLE_TABBAR,
+	setTabBarHidden,
+	NAV_TO_FOLLOWING_ADD,
+	navToFollowingAdd,
+	NAV_INIT,
+	navInit,
+	NAV_TO_HOME_DETAIL,
+	navToHomeDetail,
+}

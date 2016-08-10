@@ -1,6 +1,7 @@
 'use strict';
 
 import React, { Component } from 'react';
+import {connect} from 'react-redux';
 import { View, Text, ListView, Image, TouchableHighlight, StyleSheet, RefreshControl } from 'react-native';
 import NavigationBar from 'react-native-navbar';
 import Loading from '../../components/Loading';
@@ -10,8 +11,9 @@ import { getArticles } from '../../network';
 import AppColors from '../../common/AppColors';
 import FollowingDetail from './Detail.js';
 import FollowingAdd from './Add.js';
+import {navToFollowingAdd} from '../../actions/index';
 
-export default class FollowingPage extends Component {
+class FollowingPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -59,7 +61,7 @@ export default class FollowingPage extends Component {
 
   render() {
     let navigationBar = (<NavigationBar
-            title= {{title:this.props.title, tintColor: 'white'}} 
+            title= {{title:this.props.title, tintColor: 'white'}}
             titleTextColor='white'
             statusBar={{style: 'light-content'}}
             tintColor={AppColors.major}
@@ -98,7 +100,7 @@ export default class FollowingPage extends Component {
 
   _renderRow(rowData: string, sectionID: number) {
     return (
-      <FollowingCell 
+      <FollowingCell
         onSelect={(author) => {this._didSelectRow(author);}}
         onAddAuthor = {() => {this._didSelectAddAuthor();}}
         author={rowData}
@@ -108,7 +110,7 @@ export default class FollowingPage extends Component {
 
   _renderHeader() {
     return (
-      <HomeBanner 
+      <HomeBanner
         banners={this._getBannersData()}
         onSelect = {(rowData) => {this._didSelectRow(rowData);}}
       />
@@ -127,13 +129,7 @@ export default class FollowingPage extends Component {
   }
 
   _didSelectAddAuthor() {
-    this.props.navigator.push({
-      name: 'FollowingAdd',
-      component: FollowingAdd,
-      title: '添加订阅',
-      passProps: {
-      }
-    });
+    this.props.dispatch(navToFollowingAdd());
   }
 }
 
@@ -153,3 +149,4 @@ var styles = StyleSheet.create({
   }
 });
 
+module.exports = connect((store) => ({}))(FollowingPage)

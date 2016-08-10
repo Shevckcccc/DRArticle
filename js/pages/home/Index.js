@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import { View, Text, ListView, Image, TouchableHighlight, StyleSheet, RefreshControl } from 'react-native';
+import {connect} from 'react-redux';
 import NavigationBar from 'react-native-navbar';
 import Loading from '../../components/Loading';
 import ArticleCell from '../../components/ArticleCell';
@@ -9,8 +10,9 @@ import ArticleDetail from './Detail.js';
 import HomeBanner from '../../components/HomeBanner';
 import { getArticles } from '../../network';
 import AppColors from '../../common/AppColors';
+import {navToHomeDetail} from '../../actions/index';
 
-export default class HomePage extends Component {
+class HomePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -75,7 +77,7 @@ export default class HomePage extends Component {
 
   render() {
     let navigationBar = (<NavigationBar
-            title= {{title:this.props.title, tintColor: 'white'}} 
+            title= {{title:this.props.title, tintColor: 'white'}}
             titleTextColor='white'
             statusBar={{style: 'light-content'}}
             tintColor={AppColors.major}
@@ -118,7 +120,7 @@ export default class HomePage extends Component {
 
   _renderRow(rowData: string, sectionID: number) {
     return (
-      <ArticleCell 
+      <ArticleCell
         onSelect={(article) => {this._didSelectRow(article);}}
         article={rowData}
       />
@@ -127,7 +129,7 @@ export default class HomePage extends Component {
 
   _renderHeader() {
     return (
-      <HomeBanner 
+      <HomeBanner
         banners={this._getBannersData()}
         onSelect = {(rowData) => {this._didSelectRow(rowData);}}
       />
@@ -135,14 +137,7 @@ export default class HomePage extends Component {
   }
 
   _didSelectRow(article) {
-    this.props.navigator.push({
-      name: 'HomeDetail',
-      component: ArticleDetail,
-      title: article.title,
-      passProps: {
-        url: 'https://zhuanlan.zhihu.com' + article.url,
-      }
-    });
+    this.props.dispatch(navToHomeDetail(article));
   }
 
   // 取Banner的标题、链接和图片
@@ -168,3 +163,4 @@ var styles = StyleSheet.create({
   }
 });
 
+module.exports = connect((store) => ({}))(HomePage)

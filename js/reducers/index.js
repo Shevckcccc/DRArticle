@@ -1,6 +1,9 @@
 'use strict';
 
-import { combineReducers } from 'redux';
-import { setTabBarHidden } from './Tabbar';
+import { tabState } from './Tabbar';
+import { navState } from './navigatorReducers';
 
-export default combineReducers({ setTabBarHidden });
+module.exports = {
+  tabState,
+  navState,
+};
