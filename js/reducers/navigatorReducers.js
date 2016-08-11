@@ -21,7 +21,6 @@ const initNavState = {
 export function navState(state = initNavState, action) {
   switch (action.type) {
     case NAV_INIT: {
-      console.log('init nav: ' + (typeof action.navigator));
       return {
         ...state,
         navigator: action.navigator,

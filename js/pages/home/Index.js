@@ -1,7 +1,10 @@
 'use strict';
 
 import React, { Component } from 'react';
-import { View, Text, ListView, Image, TouchableHighlight, StyleSheet, RefreshControl } from 'react-native';
+import {
+  View, Text, ListView, Image, TouchableHighlight,
+  StyleSheet, RefreshControl, AsyncStorage,
+} from 'react-native';
 import {connect} from 'react-redux';
 import NavigationBar from 'react-native-navbar';
 import Loading from '../../components/Loading';
@@ -11,6 +14,8 @@ import HomeBanner from '../../components/HomeBanner';
 import { getArticles } from '../../network';
 import AppColors from '../../common/AppColors';
 import {navToHomeDetail} from '../../actions/index';
+
+const KEY_READED_ARTICLES = 'key_readed_articles';
 
 class HomePage extends Component {
   constructor(props) {
@@ -25,6 +30,9 @@ class HomePage extends Component {
       pageOffset: 0,
       pageLimit: 10,
     };
+
+    this._didSelectRow = this._didSelectRow.bind(this);
+    this._getReadedArticles();
   }
 
   componentWillMount() {
@@ -36,8 +44,14 @@ class HomePage extends Component {
     getArticles({offset:offset, limit:this.state.pageLimit}, {
       onSuccess: (responseData) => {
         let hasMore = responseData.length == this.state.pageLimit;
-        let articles = offset == 0 ? responseData : this.state.articles.concat(responseData);
+        var temp = offset == 0 ? responseData : this.state.articles.concat(responseData);
         let nextOffset = offset == 0 ? 1 : ++this.state.pageOffset;
+        let articles = temp.map((item, index) => {
+          return {
+            ...item,
+            isReaded: this.readedArticles.has(item.url),
+          }
+        });
 
         this.setState({
           articles: articles,
@@ -118,10 +132,11 @@ class HomePage extends Component {
     );
   }
 
-  _renderRow(rowData: string, sectionID: number) {
+  _renderRow(rowData: object, sectionID: number) {
     return (
       <ArticleCell
-        onSelect={(article) => {this._didSelectRow(article);}}
+        cellContainerStyle={{backgroundColor: rowData.isReaded ? '#eeeeee' : 'white'}}
+        onSelect={(article) => {this._didSelectRow(rowData);}}
         article={rowData}
       />
     );
@@ -137,7 +152,23 @@ class HomePage extends Component {
   }
 
   _didSelectRow(article) {
-    this.props.dispatch(navToHomeDetail(article));
+    this.readedArticles.add(article.url);
+    var newArticles = this.state.articles.slice();
+    for(var i = 0; i < newArticles.length; i++) {
+      if(this.state.articles[i] == article) {
+        newArticles[i] = {
+          ...this.state.articles[i],
+          isReaded: true,
+        };
+      }
+    }
+    let dataSource = this.state.dataSource.cloneWithRows(newArticles);
+    this.setState({
+      articles: newArticles,
+      dataSource: dataSource,
+    })
+    this._saveReadedArticles();
+    //this.props.dispatch(navToHomeDetail(article));
   }
 
   // 取Banner的标题、链接和图片
@@ -147,6 +178,32 @@ class HomePage extends Component {
       return banners;
   }
 
+  _getReadedArticles() {
+    // 获取本地保存的已读列表
+    AsyncStorage.getItem(KEY_READED_ARTICLES)
+      .then(str => str == null ? [] : str.split(';'))
+      .then(arrays => {
+        this.readedArticles = new Set(arrays);
+        console.log('本地保存已读文章: ' + JSON.stringify(arrays));
+      })
+      .done();
+  }
+
+  _saveReadedArticles() {
+    var arrayString = this._formatSet2String(this.readedArticles);
+    console.log('save readed articles: ' + arrayString);
+    AsyncStorage.setItem(KEY_READED_ARTICLES, arrayString)
+      .done();
+  }
+
+  _formatSet2String(set) {
+    var ss = '';
+    set.forEach(value => {
+      ss += value + ';';
+    });
+    ss.substring(0, ss.length - 1);
+    return ss;
+  }
 }
 
 var styles = StyleSheet.create({

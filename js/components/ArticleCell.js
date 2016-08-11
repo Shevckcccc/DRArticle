@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Component} from 'react';
+import React, {Component, PropTypes} from 'react';
 import {View,Image, Text, TouchableHighlight, StyleSheet} from 'react-native';
 import AppColors from '../common/AppColors';
 import DRImage from './DRImage';
@@ -14,10 +14,10 @@ export default class ArticleCell extends Component {
   }
   render() {
     return (
-	     <TouchableHighlight 
+	     <TouchableHighlight
 	     	onPress={() => this.props.onSelect(this.state.article)}
 	     	underlayColor={AppColors.highlight}>
-	        <View style={styles.row}>
+	        <View style={[styles.row, this.props.cellContainerStyle]}>
 	          <DRImage
 	            source={{uri: this.state.article.titleImage}}
 	            style={styles.thumbnail}
@@ -41,6 +41,11 @@ export default class ArticleCell extends Component {
   _getAuthor() {
   	return '点融网';
   }
+}
+
+ArticleCell.propTypes = {
+  cellContainerStyle: PropTypes.object,
+  ...View.propTypes,
 }
 
 var styles = StyleSheet.create({
