@@ -9,6 +9,7 @@ import {
   NAV_TO_FOLLOWING_ADD,
   NAV_INIT,
   NAV_TO_HOME_DETAIL,
+  NAV_POP,
 } from '../actions/index';
 import ArticleDetail from '../pages/home/Detail';
 import FollowingAdd from '../pages/following/Add';
@@ -46,6 +47,11 @@ export function navState(state = initNavState, action) {
           url: 'https://zhuanlan.zhihu.com' + action.article.url,
         }
       });
+      return state;
+    }
+
+    case NAV_POP: {
+      state.navigator.pop();
       return state;
     }
 

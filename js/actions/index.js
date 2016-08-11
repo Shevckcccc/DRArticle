@@ -8,6 +8,8 @@ import{
 	navInit,
 	NAV_TO_HOME_DETAIL,
 	navToHomeDetail,
+	NAV_POP,
+	navPop,
 } from './navigatorActions';
 
 module.exports = {
@@ -19,4 +21,6 @@ module.exports = {
 	navInit,
 	NAV_TO_HOME_DETAIL,
 	navToHomeDetail,
+	NAV_POP,
+	navPop,
 }

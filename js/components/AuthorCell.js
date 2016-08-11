@@ -9,7 +9,8 @@ export default class ArticleCell extends Component {
 
   render() {
     return (
-	     <TouchableHighlight 
+	     <TouchableHighlight
+        style={this.props.style}
 	     	onPress={() => this.props.onSelect(this.props.author)}
 	     	underlayColor={AppColors.highlight}>
 	        <View style={styles.row}>

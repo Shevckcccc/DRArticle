@@ -8,6 +8,7 @@
 export const NAV_INIT = 'nav_init';
 export const NAV_TO_FOLLOWING_ADD = 'nav_to_following_add';
 export const NAV_TO_HOME_DETAIL = 'nav_to_home_detail';
+export const NAV_POP = 'nav_pop';
 
 export function navInit(navigator) {
   return {
@@ -26,5 +27,11 @@ export function navToHomeDetail(article) {
   return{
     type: NAV_TO_HOME_DETAIL,
     article,
+  }
+}
+
+export function navPop() {
+  return{
+    type:NAV_POP,
   }
 }
