@@ -168,7 +168,7 @@ class HomePage extends Component {
       dataSource: dataSource,
     })
     this._saveReadedArticles();
-    //this.props.dispatch(navToHomeDetail(article));
+    this.props.dispatch(navToHomeDetail(article));
   }
 
   // 取Banner的标题、链接和图片
