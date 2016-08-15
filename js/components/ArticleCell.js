@@ -39,7 +39,7 @@ export default class ArticleCell extends Component {
   }
 
   _getAuthor() {
-  	return '点融网';
+  	return '知乎';
   }
 }
 

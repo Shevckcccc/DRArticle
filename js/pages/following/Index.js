@@ -118,14 +118,7 @@ class FollowingPage extends Component {
   }
 
   _didSelectRow(author) {
-    this.props.navigator.push({
-      name: 'FollowingDetail',
-      component: FollowingDetail,
-      title: author.author.name,
-      passProps: {
-        author: author,
-      }
-    });
+    this.props.dispatch(navToFollowingAdd(author));
   }
 
   _didSelectAddAuthor() {

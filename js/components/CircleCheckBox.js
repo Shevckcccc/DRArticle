@@ -36,9 +36,9 @@ class CircleCheckBox extends Component {
     outerSize: 26,
     filterSize: 23,
     innerSize: 18,
-    outerColor: '#FC9527',
+    outerColor: '#2e3c49',
     filterColor: '#FFF',
-    innerColor: '#FC9527',
+    innerColor: '#2e3c49',
     label: '',
     labelPosition: 'right'
   };

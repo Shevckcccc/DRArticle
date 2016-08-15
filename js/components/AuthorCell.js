@@ -21,7 +21,7 @@ export default class ArticleCell extends Component {
 	          <View style={styles.rightContainer}>
               <Text style={styles.author}>{this._getAuthor()}</Text>
 	            <Text style={styles.desc}>
-                点融网致力打造高效透明的网络借贷平台。白领理财利器团团赚安全、灵活、收益好；贷款产品费用低、审批快。手机理财上点融
+                知乎是一个真实的网络问答社区，社区氛围友好与理性，连接各行各业的精英。用户分享着彼此的专业知识、经验和见解，为中文互联网源源不断地提供高质量的信息
               </Text>
 	          </View>
 	        </View>
@@ -30,7 +30,7 @@ export default class ArticleCell extends Component {
   }
 
   _getAuthor() {
-  	return '点融网';
+  	return '知乎';
   }
 }
 

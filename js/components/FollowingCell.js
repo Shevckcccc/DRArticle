@@ -45,7 +45,7 @@ export default class FollowingCell extends Component {
   }
 
   _getAuthor() {
-  	return '点融网';
+  	return '知乎';
   }
 }
 
